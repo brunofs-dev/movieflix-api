@@ -1,6 +1,7 @@
 {
   "name": "movieflix-api",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": " npx tsx watch src/server.ts"
@@ -11,6 +12,7 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
     "@types/node": "^25.2.3",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
@@ -19,5 +21,8 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.0"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
