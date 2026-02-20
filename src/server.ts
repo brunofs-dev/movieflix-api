@@ -24,6 +24,18 @@ app.post("/movies", async (req, res) => {
         req.body;
 
     try {
+        // CASE INSENSITIVE: para evitar que tenhamos mais de um filme com o mesmo título, mesmo que seja com letras maiúsculas ou minúsculas
+
+        // CASE SENSITIVE: se buscar por John wick e no banco estiver como John wick, nao vai ser retornado na consulta.
+
+        const movieWithSameTitle = await prisma.movie.findFirst({
+            where: { title: { equals: title, mode: 'insensitive' }},
+        });
+
+        if(movieWithSameTitle) {
+            return res.status(409).send({ message: 'Já existe um filme cadastrado com esse título'})
+        }
+
         await prisma.movie.create({
             data: {
                 title,
