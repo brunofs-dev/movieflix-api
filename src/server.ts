@@ -29,11 +29,13 @@ app.post("/movies", async (req, res) => {
         // CASE SENSITIVE: se buscar por John wick e no banco estiver como John wick, nao vai ser retornado na consulta.
 
         const movieWithSameTitle = await prisma.movie.findFirst({
-            where: { title: { equals: title, mode: 'insensitive' }},
+            where: { title: { equals: title, mode: "insensitive" } },
         });
 
-        if(movieWithSameTitle) {
-            return res.status(409).send({ message: 'Já existe um filme cadastrado com esse título'})
+        if (movieWithSameTitle) {
+            return res.status(409).send({
+                message: "Já existe um filme cadastrado com esse título",
+            });
         }
 
         await prisma.movie.create({
@@ -50,6 +52,43 @@ app.post("/movies", async (req, res) => {
     }
 
     res.status(201).send();
+});
+
+app.put("/movies/:id", async (req, res) => {
+    // Pegar o id do registro que vai ser atualizado.
+    const id = Number(req.params.id);
+
+    try {
+        const movie = await prisma.movie.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        if (!movie) {
+            return res.status(404).send({ message: "Filme não encontrado" });
+        }
+
+        const data = { ...req.body };
+        data.release_date = data.release_date
+            ? new Date(data.release_date)
+            : undefined;
+
+        // Pegar os dados do filme que será atualizado e atualizar ele no prisma.
+        await prisma.movie.update({
+            where: {
+                id,
+            },
+            data: data,
+        });
+    } catch (error) {
+        return res
+            .status(500)
+            .send({ message: "Erro ao atualizar o registro do filme" });
+    }
+
+    // Retornar o status correto informando que o filme foi atualizado.
+    res.status(200).send();
 });
 
 app.listen(port, () => {
